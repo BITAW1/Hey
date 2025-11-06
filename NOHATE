@@ -1,199 +1,313 @@
---// Services
+-- Services
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
 
---// Constants
-local YOUR_SECRET_KEY = "GATASNOHATE" -- Change this!
+-- Constants (Adjust these for your liking)
+local PRIMARY_COLOR = Color3.fromRGB(147, 51, 234)  -- Purple-ish
+local SECONDARY_COLOR = Color3.fromRGB(219, 39, 119) -- Pink-ish
+local TERTIARY_COLOR = Color3.fromRGB(59, 130, 246)  -- Blue-ish
+local BACKGROUND_COLOR = Color3.fromRGB(18, 18, 25)
+local TEXT_COLOR = Color3.fromRGB(255, 255, 255)
+local SUBTEXT_COLOR = Color3.fromRGB(220, 220, 255)
+local TAB_COLOR = Color3.fromRGB(25, 25, 35)
+local TAB_SELECTED_COLOR = PRIMARY_COLOR
 
---// Local Player
+-- Get Local Player
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
---// UI Creation
-local gui = Instance.new("ScreenGui")
-gui.Name = "KeySystemUI" -- ScreenGui para sa Key System lang
-gui.ResetOnSpawn = false
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-gui.Parent = PlayerGui
+-- Create the ScreenGui
+local MainGUI = Instance.new("ScreenGui")
+MainGUI.Name = "STAN_UI"
+MainGUI.ResetOnSpawn = false
+MainGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+MainGUI.Parent = PlayerGui
 
--- KEY SYSTEM
-local keyFrame = Instance.new("Frame")
-keyFrame.Name = "KeySystem"
-keyFrame.Size = UDim2.new(0, 420, 0, 350)
-keyFrame.Position = UDim2.new(0.5, -210, 0.5, -175)
-keyFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-keyFrame.BorderSizePixel = 0
-keyFrame.Parent = gui
+-- Main Frame
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 650, 0, 410)
+MainFrame.Position = UDim2.new(0.5, -325, 0.5, -205)
+MainFrame.BackgroundColor3 = BACKGROUND_COLOR
+MainFrame.BorderSizePixel = 0
+MainFrame.Parent = MainGUI
 
-local keyCorner = Instance.new("UICorner")
-keyCorner.CornerRadius = UDim.new(0, 14)
-keyCorner.Parent = keyFrame
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.Parent = MainFrame
 
-local keyHeader = Instance.new("Frame")
-keyHeader.Size = UDim2.new(1, 0, 0, 110)
-keyHeader.BackgroundColor3 = Color3.fromRGB(147, 51, 234)
-keyHeader.BorderSizePixel = 0
-keyHeader.Parent = keyFrame
+-- Top Bar
+local TopBar = Instance.new("Frame")
+TopBar.Name = "TopBar"
+TopBar.Size = UDim2.new(1, 0, 0, 70)
+TopBar.BackgroundColor3 = PRIMARY_COLOR
+TopBar.BorderSizePixel = 0
+TopBar.Parent = MainFrame
+TopBar.Draggable = true  --Make it draggable
 
-local headerCorner = Instance.new("UICorner")
-headerCorner.CornerRadius = UDim.new(0, 14)
-headerCorner.Parent = keyHeader
+local TopCorner = Instance.new("UICorner")
+TopCorner.CornerRadius = UDim.new(0, 12)
+TopCorner.Parent = TopBar
 
-local headerGrad = Instance.new("UIGradient")
-headerGrad.Color = ColorSequence.new{
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(147, 51, 234)),
-	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(219, 39, 119)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(59, 130, 246))
+-- Top Bar Gradient
+local TopGradient = Instance.new("UIGradient")
+TopGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, PRIMARY_COLOR),
+    ColorSequenceKeypoint.new(0.5, SECONDARY_COLOR),
+    ColorSequenceKeypoint.new(1, TERTIARY_COLOR)
 }
-headerGrad.Parent = keyHeader
+TopGradient.Rotation = 0
+TopGradient.Parent = TopBar
 
+-- Animate the Gradient (Optional - gives it that STAN UI feel)
 spawn(function()
-	while keyHeader and keyHeader.Parent do
-		headerGrad.Rotation = headerGrad.Rotation + 1
-		task.wait(0.05)
-	end)
-
-local keyIcon = Instance.new("TextLabel")
-keyIcon.Size = UDim2.new(0, 60, 0, 60)
-keyIcon.Position = UDim2.new(0.5, -30, 0, 12)
-keyIcon.BackgroundTransparency = 1
-keyIcon.Font = Enum.Font.GothamBold
-keyIcon.Text = "K" -- Icon -  palitan kung gusto mo
-keyIcon.TextSize = 38
-keyIcon.Parent = keyHeader
-
-local keyTitle = Instance.new("TextLabel")
-keyTitle.Size = UDim2.new(1, 0, 0, 24)
-keyTitle.Position = UDim2.new(0, 0, 0, 78)
-keyTitle.BackgroundTransparency = 1
-keyTitle.Font = Enum.Font.GothamBold
-keyTitle.Text = "Key Verification" -- Palitan mo kung gusto mo
-keyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-keyTitle.TextSize = 18
-keyTitle.Parent = keyHeader
-
-local statusLabel = Instance.new("TextLabel")
-statusLabel.Size = UDim2.new(1, -40, 0, 55)
-statusLabel.Position = UDim2.new(0, 20, 0, 125)
-statusLabel.BackgroundColor3 = Color3.fromRGB(59, 130, 246)
-statusLabel.BackgroundTransparency = 0.9
-statusLabel.BorderSizePixel = 0
-statusLabel.Font = Enum.Font.GothamMedium
-statusLabel.Text = "Access Required\n\nEnter key to continue" -- Palitan mo kung gusto mo
-statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-statusLabel.TextSize = 12
-statusLabel.Parent = keyFrame
-
-local statusCorner = Instance.new("UICorner")
-statusCorner.CornerRadius = UDim.new(0, 10)
-statusCorner.Parent = statusLabel
-
-local keyInput = Instance.new("TextBox")
-keyInput.Size = UDim2.new(1, -40, 0, 44)
-keyInput.Position = UDim2.new(0, 20, 0, 195)
-keyInput.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
-keyInput.BorderSizePixel = 0
-keyInput.Font = Enum.Font.Gotham
-keyInput.PlaceholderText = "Enter your key..." -- Palitan mo kung gusto mo
-keyInput.PlaceholderColor3 = Color3.fromRGB(120, 120, 140)
-keyInput.Text = ""
-keyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-keyInput.TextSize = 13
-keyInput.TextXAlignment = Enum.TextXAlignment.Center
-keyInput.Parent = keyFrame
-
-local inputCorner = Instance.new("UICorner")
-inputCorner.CornerRadius = UDim.new(0, 10)
-inputCorner.Parent = keyInput
-
-local verifyBtn = Instance.new("TextButton")
-verifyBtn.Size = UDim2.new(1, -40, 0, 44)
-verifyBtn.Position = UDim2.new(0, 20, 0, 249)
-verifyBtn.BackgroundColor3 = Color3.fromRGB(147, 51, 234)
-verifyBtn.BorderSizePixel = 0
-verifyBtn.Font = Enum.Font.GothamBold
-verifyBtn.Text = "Verify Key" -- Palitan mo kung gusto mo
-verifyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-verifyBtn.TextSize = 14
-verifyBtn.Parent = keyFrame
-
-local btnCorner = Instance.new("UICorner")
-btnCorner.CornerRadius = UDim.new(0, 10)
-btnCorner.Parent = verifyBtn
-
-local btnGrad = Instance.new("UIGradient")
-btnGrad.Color = ColorSequence.new{
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(147, 51, 234)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(219, 39, 119))
-}
-btnGrad.Parent = verifyBtn
-
-local infoLabel = Instance.new("TextLabel")
-infoLabel.Size = UDim2.new(1, -40, 0, 35)
-infoLabel.Position = UDim2.new(0, 20, 0, 303)
-infoLabel.BackgroundColor3 = Color3.fromRGB(147, 51, 234)
-infoLabel.BackgroundTransparency = 0.95
-infoLabel.BorderSizePixel = 0
-infoLabel.Font = Enum.Font.Gotham
-infoLabel.Text = "Contact owner for key access" -- Palitan mo kung gusto mo
-infoLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
-infoLabel.TextSize = 11
-infoLabel.Parent = keyFrame
-
-local infoCorner = Instance.new("UICorner")
-infoCorner.CornerRadius = UDim.new(0, 8)
-infoCorner.Parent = infoLabel
-
---// Key Verification Logic
-verifyBtn.MouseButton1Click:Connect(function()
-	local enteredKey = keyInput.Text
-
-	if enteredKey == "" then
-		statusLabel.Text = "Error\n\nPlease enter a key!"
-		statusLabel.BackgroundColor3 = Color3.fromRGB(239, 68, 68)
-		statusLabel.BackgroundTransparency = 0.9
-		return
-	end
-
-	verifyBtn.Text = "Verifying..."
-	verifyBtn.BackgroundColor3 = Color3.fromRGB(251, 191, 36)
-	statusLabel.Text = "Checking...\n\nPlease wait..."
-	statusLabel.BackgroundColor3 = Color3.fromRGB(251, 191, 36)
-	statusLabel.BackgroundTransparency = 0.9
-
-	task.wait(0.8)
-
-	if enteredKey == YOUR_SECRET_KEY then
-		verifyBtn.Text = "Success!"
-		verifyBtn.BackgroundColor3 = Color3.fromRGB(34, 197, 94)
-		statusLabel.Text = "Access Granted!"
-		statusLabel.BackgroundColor3 = Color3.fromRGB(34, 197, 94)
-		statusLabel.BackgroundTransparency = 0.9
-
-		task.wait(0.6)
-
-		TweenService:Create(keyFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
-			Position = UDim2.new(0.5, -210, -1, 0)
-		}):Play()
-
-		task.wait(0.3)
-		keyFrame:Destroy()
-
-
-	else
-		verifyBtn.Text = "Invalid Key!"
-		verifyBtn.BackgroundColor3 = Color3.fromRGB(239, 68, 68)
-		statusLabel.Text = "Wrong Key!\n\nPlease try again"
-		statusLabel.BackgroundColor3 = Color3.fromRGB(239, 68, 68)
-		statusLabel.BackgroundTransparency = 0.9
-		keyInput.Text = ""
-
-		task.wait(1.5)
-
-		verifyBtn.Text = "Verify Key" -- Palitan mo kung gusto mo
-		verifyBtn.BackgroundColor3 = Color3.fromRGB(147, 51, 234)
-		statusLabel.Text = "Access Required\n\nEnter key to continue" -- Palitan mo kung gusto mo
-		statusLabel.BackgroundColor3 = Color3.fromRGB(59, 130, 246)
-		statusLabel.BackgroundTransparency = 0.9
-	end
+    while TopBar and TopBar.Parent do
+        TopGradient.Rotation = (TopGradient.Rotation + 1) % 360
+        task.wait(0.05)
+    end
 end)
+
+-- Profile Picture (Placeholder for now - you'll need to load the actual image)
+local Pfp = Instance.new("ImageLabel")
+Pfp.Name = "Pfp"
+Pfp.Size = UDim2.new(0, 46, 0, 46)
+Pfp.Position = UDim2.new(0, 14, 0, 12)
+Pfp.BackgroundColor3 = Color3.fromRGB(255, 255, 255) --White Background
+Pfp.BorderSizePixel = 0
+Pfp.Parent = TopBar
+Pfp.Image = "rbxassetid://0" -- Transparent Image
+
+local PfpCorner = Instance.new("UICorner")
+PfpCorner.CornerRadius = UDim.new(1, 0) -- Full circle
+PfpCorner.Parent = Pfp
+
+-- Status indicator (Green circle)
+local Status = Instance.new("Frame")
+Status.Name = "Status"
+Status.Size = UDim2.new(0, 12, 0, 12)
+Status.Position = UDim2.new(1, -10, 1, -10)
+Status.BackgroundColor3 = Color3.fromRGB(34, 197, 94) -- Green
+Status.BorderSizePixel = 0
+Status.Parent = Pfp
+
+local StatusCorner = Instance.new("UICorner")
+StatusCorner.CornerRadius = UDim.new(1, 0) --Full circle
+StatusCorner.Parent = Status
+
+-- Display Name
+local DisplayName = Instance.new("TextLabel")
+DisplayName.Name = "DisplayName"
+DisplayName.Size = UDim2.new(0, 280, 0, 20)
+DisplayName.Position = UDim2.new(0, 68, 0, 16)
+DisplayName.BackgroundTransparency = 1
+DisplayName.Font = Enum.Font.GothamBold
+DisplayName.Text = Player.DisplayName
+DisplayName.TextColor3 = TEXT_COLOR
+DisplayName.TextSize = 15
+DisplayName.TextXAlignment = Enum.TextXAlignment.Left
+DisplayName.Parent = TopBar
+
+-- Username
+local Username = Instance.new("TextLabel")
+Username.Name = "Username"
+Username.Size = UDim2.new(0, 280, 0, 16)
+Username.Position = UDim2.new(0, 68, 0, 36)
+Username.BackgroundTransparency = 1
+Username.Font = Enum.Font.Gotham
+Username.Text = "@" .. Player.Name
+Username.TextColor3 = SUBTEXT_COLOR
+Username.TextSize = 11
+Username.TextXAlignment = Enum.TextXAlignment.Left
+Username.Parent = TopBar
+
+-- UI Title (Top Right)
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Name = "TitleLabel"
+TitleLabel.Size = UDim2.new(0, 140, 0, 70)
+TitleLabel.Position = UDim2.new(1, -150, 0, 0)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.Text = "My UI"  -- Change this to your UI's name
+TitleLabel.TextColor3 = TEXT_COLOR
+TitleLabel.TextSize = 22
+TitleLabel.Parent = TopBar
+
+-- Close Button
+local CloseButton = Instance.new("TextButton")
+CloseButton.Name = "CloseButton"
+CloseButton.Size = UDim2.new(0, 32, 0, 32)
+CloseButton.Position = UDim2.new(1, -38, 0, 19)
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.BackgroundTransparency = 0.9
+CloseButton.BorderSizePixel = 0
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.Text = "X"  -- Or use an icon font here
+CloseButton.TextColor3 = TEXT_COLOR
+CloseButton.TextSize = 15
+CloseButton.Parent = TopBar
+
+local CloseButtonCorner = Instance.new("UICorner")
+CloseButtonCorner.CornerRadius = UDim.new(0, 6)
+CloseButtonCorner.Parent = CloseButton
+
+-- Minimize Button
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Name = "MinimizeButton"
+MinimizeButton.Size = UDim2.new(0, 32, 0, 32)
+MinimizeButton.Position = UDim2.new(1, -73, 0, 19)
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.BackgroundTransparency = 0.9
+MinimizeButton.BorderSizePixel = 0
+MinimizeButton.Font = Enum.Font.GothamBold
+MinimizeButton.Text = "–"  -- Or use an icon font here
+MinimizeButton.TextColor3 = TEXT_COLOR
+MinimizeButton.TextSize = 16
+MinimizeButton.Parent = TopBar
+
+local MinimizeButtonCorner = Instance.new("UICorner")
+MinimizeButtonCorner.CornerRadius = UDim.new(0, 6)
+MinimizeButtonCorner.Parent = MinimizeButton
+
+-- Tabs Frame
+local TabsFrame = Instance.new("Frame")
+TabsFrame.Name = "TabsFrame"
+TabsFrame.Size = UDim2.new(0, 145, 1, -80)
+TabsFrame.Position = UDim2.new(0, 8, 0, 75)
+TabsFrame.BackgroundColor3 = TAB_COLOR
+TabsFrame.BorderSizePixel = 0
+TabsFrame.Parent = MainFrame
+
+local TabsCorner = Instance.new("UICorner")
+TabsCorner.CornerRadius = UDim.new(0, 10)
+TabsCorner.Parent = TabsFrame
+
+-- Tab Layout (For automatically positioning the tabs)
+local TabLayout = Instance.new("UIListLayout")
+TabLayout.Padding = UDim.new(0, 5)
+TabLayout.Parent = TabsFrame
+
+local TabPadding = Instance.new("UIPadding")
+tabPadding.PaddingTop = UDim.new(0, 8)
+tabPadding.PaddingLeft = UDim.new(0, 8)
+tabPadding.PaddingRight = UDim.new(0, 8)
+tabPadding.Parent = TabsFrame
+
+-- Content Frame
+local ContentFrame = Instance.new("Frame")
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Size = UDim2.new(1, -168, 1, -80)
+ContentFrame.Position = UDim2.new(0, 158, 0, 75)
+ContentFrame.BackgroundColor3 = TAB_COLOR
+ContentFrame.BorderSizePixel = 0
+ContentFrame.Parent = MainFrame
+
+local ContentCorner = Instance.new("UICorner")
+ContentCorner.CornerRadius = UDim.new(0, 10)
+ContentCorner.Parent = ContentFrame
+
+
+-- Draggable Functionality
+local dragging = false
+local dragInput = nil
+local dragStart = nil
+local startPos = nil
+
+TopBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragInput = input
+        dragStart = input.Position
+        startPos = MainFrame.Position
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input == dragInput then
+        dragging = false
+        dragInput = nil
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input == dragInput and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        MainFrame.Position = UDim2.new(
+            startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+
+-- Function to Create a Tab Button
+local function createTabButton(name, order)
+    local TabButton = Instance.new("TextButton")
+    TabButton.Name = name .. "TabButton"
+    TabButton.Size = UDim2.new(1, 0, 0, 38)
+    TabButton.BackgroundColor3 = TAB_COLOR
+    TabButton.BorderSizePixel = 0
+    TabButton.Font = Enum.Font.GothamBold
+    TabButton.Text = name
+    TabButton.TextColor3 = TEXT_COLOR
+    TabButton.TextSize = 12
+    TabButton.LayoutOrder = order
+    TabButton.Parent = TabsFrame
+
+    local TabButtonCorner = Instance.new("UICorner")
+    TabButtonCorner.CornerRadius = UDim.new(0, 7)
+    TabButtonCorner.Parent = TabButton
+
+    TabButton.MouseButton1Click:Connect(function()
+        -- Deselect all other tabs
+        for _, tab in pairs(TabsFrame:GetChildren()) do
+            if tab:IsA("TextButton") then
+                tab.BackgroundColor3 = TAB_COLOR
+            end
+        end
+
+        -- Select this tab
+        TabButton.BackgroundColor3 = TAB_SELECTED_COLOR
+        updateContent(name) -- Call a function to update the content frame
+
+    end)
+
+    return TabButton
+end
+
+local function clearContent()
+	for _, v in pairs(ContentFrame:GetChildren()) do
+		if v:IsA("GuiObject") then
+			v:Destroy()
+		end
+	end
+end
+
+local function updateContent(tabName)
+    clearContent() -- Clear previous content
+
+    local ContentLabel = Instance.new("TextLabel")
+	ContentLabel.Size = UDim2.new(1, -20, 0, 80)
+	ContentLabel.Position = UDim2.new(0, 10, 0, 10)
+	ContentLabel.BackgroundColor3 = Color3.fromRGB(147, 51, 234)
+	ContentLabel.BackgroundTransparency = 0.95
+	ContentLabel.BorderSizePixel = 0
+	ContentLabel.Font = Enum.Font.GothamBold
+	ContentLabel.Text = "Content for " .. tabName .." Tab" -- Palitan mo kung gusto mo
+	ContentLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	ContentLabel.TextSize = 13
+	ContentLabel.Parent = ContentFrame
+
+	local ContentCorner = Instance.new("UICorner")
+	ContentCorner.CornerRadius = UDim.new(0, 10)
+	ContentCorner.Parent = ContentLabel
+end
+
+-- Create the tabs
+local HomeTab = createTabButton("Home", 1)
+local SettingsTab = createTabButton("Settings", 2)
+
+
+-- Select the Home tab by default
+HomeTab.BackgroundColor3 = TAB_SELECTED_COLOR
+updateContent("Home") -- Initial content
