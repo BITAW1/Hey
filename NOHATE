@@ -1,0 +1,199 @@
+--// Services
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+
+--// Constants
+local YOUR_SECRET_KEY = "GATASNOHATE" -- Change this!
+
+--// Local Player
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+--// UI Creation
+local gui = Instance.new("ScreenGui")
+gui.Name = "KeySystemUI" -- ScreenGui para sa Key System lang
+gui.ResetOnSpawn = false
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.Parent = PlayerGui
+
+-- KEY SYSTEM
+local keyFrame = Instance.new("Frame")
+keyFrame.Name = "KeySystem"
+keyFrame.Size = UDim2.new(0, 420, 0, 350)
+keyFrame.Position = UDim2.new(0.5, -210, 0.5, -175)
+keyFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+keyFrame.BorderSizePixel = 0
+keyFrame.Parent = gui
+
+local keyCorner = Instance.new("UICorner")
+keyCorner.CornerRadius = UDim.new(0, 14)
+keyCorner.Parent = keyFrame
+
+local keyHeader = Instance.new("Frame")
+keyHeader.Size = UDim2.new(1, 0, 0, 110)
+keyHeader.BackgroundColor3 = Color3.fromRGB(147, 51, 234)
+keyHeader.BorderSizePixel = 0
+keyHeader.Parent = keyFrame
+
+local headerCorner = Instance.new("UICorner")
+headerCorner.CornerRadius = UDim.new(0, 14)
+headerCorner.Parent = keyHeader
+
+local headerGrad = Instance.new("UIGradient")
+headerGrad.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(147, 51, 234)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(219, 39, 119)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(59, 130, 246))
+}
+headerGrad.Parent = keyHeader
+
+spawn(function()
+	while keyHeader and keyHeader.Parent do
+		headerGrad.Rotation = headerGrad.Rotation + 1
+		task.wait(0.05)
+	end)
+
+local keyIcon = Instance.new("TextLabel")
+keyIcon.Size = UDim2.new(0, 60, 0, 60)
+keyIcon.Position = UDim2.new(0.5, -30, 0, 12)
+keyIcon.BackgroundTransparency = 1
+keyIcon.Font = Enum.Font.GothamBold
+keyIcon.Text = "K" -- Icon -  palitan kung gusto mo
+keyIcon.TextSize = 38
+keyIcon.Parent = keyHeader
+
+local keyTitle = Instance.new("TextLabel")
+keyTitle.Size = UDim2.new(1, 0, 0, 24)
+keyTitle.Position = UDim2.new(0, 0, 0, 78)
+keyTitle.BackgroundTransparency = 1
+keyTitle.Font = Enum.Font.GothamBold
+keyTitle.Text = "Key Verification" -- Palitan mo kung gusto mo
+keyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+keyTitle.TextSize = 18
+keyTitle.Parent = keyHeader
+
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1, -40, 0, 55)
+statusLabel.Position = UDim2.new(0, 20, 0, 125)
+statusLabel.BackgroundColor3 = Color3.fromRGB(59, 130, 246)
+statusLabel.BackgroundTransparency = 0.9
+statusLabel.BorderSizePixel = 0
+statusLabel.Font = Enum.Font.GothamMedium
+statusLabel.Text = "Access Required\n\nEnter key to continue" -- Palitan mo kung gusto mo
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusLabel.TextSize = 12
+statusLabel.Parent = keyFrame
+
+local statusCorner = Instance.new("UICorner")
+statusCorner.CornerRadius = UDim.new(0, 10)
+statusCorner.Parent = statusLabel
+
+local keyInput = Instance.new("TextBox")
+keyInput.Size = UDim2.new(1, -40, 0, 44)
+keyInput.Position = UDim2.new(0, 20, 0, 195)
+keyInput.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
+keyInput.BorderSizePixel = 0
+keyInput.Font = Enum.Font.Gotham
+keyInput.PlaceholderText = "Enter your key..." -- Palitan mo kung gusto mo
+keyInput.PlaceholderColor3 = Color3.fromRGB(120, 120, 140)
+keyInput.Text = ""
+keyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+keyInput.TextSize = 13
+keyInput.TextXAlignment = Enum.TextXAlignment.Center
+keyInput.Parent = keyFrame
+
+local inputCorner = Instance.new("UICorner")
+inputCorner.CornerRadius = UDim.new(0, 10)
+inputCorner.Parent = keyInput
+
+local verifyBtn = Instance.new("TextButton")
+verifyBtn.Size = UDim2.new(1, -40, 0, 44)
+verifyBtn.Position = UDim2.new(0, 20, 0, 249)
+verifyBtn.BackgroundColor3 = Color3.fromRGB(147, 51, 234)
+verifyBtn.BorderSizePixel = 0
+verifyBtn.Font = Enum.Font.GothamBold
+verifyBtn.Text = "Verify Key" -- Palitan mo kung gusto mo
+verifyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+verifyBtn.TextSize = 14
+verifyBtn.Parent = keyFrame
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 10)
+btnCorner.Parent = verifyBtn
+
+local btnGrad = Instance.new("UIGradient")
+btnGrad.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(147, 51, 234)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(219, 39, 119))
+}
+btnGrad.Parent = verifyBtn
+
+local infoLabel = Instance.new("TextLabel")
+infoLabel.Size = UDim2.new(1, -40, 0, 35)
+infoLabel.Position = UDim2.new(0, 20, 0, 303)
+infoLabel.BackgroundColor3 = Color3.fromRGB(147, 51, 234)
+infoLabel.BackgroundTransparency = 0.95
+infoLabel.BorderSizePixel = 0
+infoLabel.Font = Enum.Font.Gotham
+infoLabel.Text = "Contact owner for key access" -- Palitan mo kung gusto mo
+infoLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+infoLabel.TextSize = 11
+infoLabel.Parent = keyFrame
+
+local infoCorner = Instance.new("UICorner")
+infoCorner.CornerRadius = UDim.new(0, 8)
+infoCorner.Parent = infoLabel
+
+--// Key Verification Logic
+verifyBtn.MouseButton1Click:Connect(function()
+	local enteredKey = keyInput.Text
+
+	if enteredKey == "" then
+		statusLabel.Text = "Error\n\nPlease enter a key!"
+		statusLabel.BackgroundColor3 = Color3.fromRGB(239, 68, 68)
+		statusLabel.BackgroundTransparency = 0.9
+		return
+	end
+
+	verifyBtn.Text = "Verifying..."
+	verifyBtn.BackgroundColor3 = Color3.fromRGB(251, 191, 36)
+	statusLabel.Text = "Checking...\n\nPlease wait..."
+	statusLabel.BackgroundColor3 = Color3.fromRGB(251, 191, 36)
+	statusLabel.BackgroundTransparency = 0.9
+
+	task.wait(0.8)
+
+	if enteredKey == YOUR_SECRET_KEY then
+		verifyBtn.Text = "Success!"
+		verifyBtn.BackgroundColor3 = Color3.fromRGB(34, 197, 94)
+		statusLabel.Text = "Access Granted!"
+		statusLabel.BackgroundColor3 = Color3.fromRGB(34, 197, 94)
+		statusLabel.BackgroundTransparency = 0.9
+
+		task.wait(0.6)
+
+		TweenService:Create(keyFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			Position = UDim2.new(0.5, -210, -1, 0)
+		}):Play()
+
+		task.wait(0.3)
+		keyFrame:Destroy()
+
+
+	else
+		verifyBtn.Text = "Invalid Key!"
+		verifyBtn.BackgroundColor3 = Color3.fromRGB(239, 68, 68)
+		statusLabel.Text = "Wrong Key!\n\nPlease try again"
+		statusLabel.BackgroundColor3 = Color3.fromRGB(239, 68, 68)
+		statusLabel.BackgroundTransparency = 0.9
+		keyInput.Text = ""
+
+		task.wait(1.5)
+
+		verifyBtn.Text = "Verify Key" -- Palitan mo kung gusto mo
+		verifyBtn.BackgroundColor3 = Color3.fromRGB(147, 51, 234)
+		statusLabel.Text = "Access Required\n\nEnter key to continue" -- Palitan mo kung gusto mo
+		statusLabel.BackgroundColor3 = Color3.fromRGB(59, 130, 246)
+		statusLabel.BackgroundTransparency = 0.9
+	end
+end)
